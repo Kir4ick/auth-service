@@ -1,0 +1,20 @@
+openapi: 3.1.0
+
+info:
+  title: Auth service
+  description: Title
+  version: 1.0.0
+tags:
+  - user
+  - auth
+servers:
+  - url: 'http://localhost'
+
+paths:
+  /sign-in:
+    post:
+      tags:
+        - auth
+      operationId: sign-in
+
+  

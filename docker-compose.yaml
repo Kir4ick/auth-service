@@ -28,7 +28,7 @@ services:
       [
         "sh",
         "-c",
-        'migrate -source file://migrations -database "postgresql://test:test@auth_db:5432/auth?sslmode=disable" up',
+        'migrate -source file://migrations -database "postgresql://test:test@auth_service_db:5432/auth?sslmode=disable" up',
       ]
     depends_on:
       - auth_service_db

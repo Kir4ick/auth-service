@@ -1,7 +1,36 @@
 package app
 
-import "github.com/auth-service/internal/config"
+import (
+	"context"
+	"github.com/auth-service/internal/config"
+	"github.com/auth-service/internal/initialize"
+	"github.com/auth-service/pkg"
+	"github.com/pkg/errors"
+	"time"
+)
+
+const shutdownTimeout = 15 * time.Second
 
 func Run(config *config.Config) error {
+	ctx := context.Background()
+
+	controllers := initialize.NewControllers()
+	routes := initialize.NewRoutes(controllers)
+
+	server := new(pkg.Server)
+	if err := server.Run(config.HTTP_PORT, routes.InitRoutes()); err != nil {
+		return errors.Wrap(err, "failed to start server")
+	}
+
+	<-ctx.Done()
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
+
+	err := server.Shutdown(shutdownCtx)
+	if err != nil {
+		return errors.Wrap(err, "failed to shutdown server")
+	}
+
 	return nil
 }
