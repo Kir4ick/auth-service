@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/caarlos0/env/v11"
 	"github.com/pkg/errors"
 )
@@ -13,14 +14,14 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	config := &Config{}
+	var config Config
 
-	err := env.Parse(config)
+	err := env.Parse(&config)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse env")
 	}
 
-	return config, nil
+	return &config, nil
 }
 
 type Network struct {
@@ -29,11 +30,15 @@ type Network struct {
 }
 
 type Database struct {
-	HOST     string `env:"DB_HOST"`
-	PORT     string `env:"DB_PORT"`
-	USER     string `env:"DB_USER"`
-	PASS     string `env:"DB_PASS"`
-	DATABASE string `env:"DB_DATABASE"`
+	Host     string `env:"DB_HOST"`
+	Port     string `env:"DB_PORT"`
+	User     string `env:"DB_USER"`
+	Password string `env:"DB_PASS"`
+	DbName   string `env:"DB_DATABASE"`
+}
+
+func (d *Database) GetDatabaseConnect() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s", d.User, d.Password, d.Host, d.Port, d.DbName)
 }
 
 type RabbitMq struct {

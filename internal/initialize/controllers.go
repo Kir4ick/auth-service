@@ -7,9 +7,9 @@ type Controllers struct {
 	userController *rest.UserController
 }
 
-func NewControllers() *Controllers {
+func NewControllers(services *Services) *Controllers {
 	return &Controllers{
-		authController: rest.NewAuthController(),
+		authController: rest.NewAuthController(services.auth),
 		userController: rest.NewUserController(),
 	}
 }
